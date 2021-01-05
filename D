@@ -1,0 +1,178 @@
+from tkinter import *
+root = Tk()
+root.title("ALPHA BANK ATM")
+import time
+import datetime
+import colorama
+from colorama import Fore, Back, Style
+colorama.init(autoreset=True)
+def menu():
+    balance = 0
+    print("""
+    ======= ANY BANK ATM =======
+    ============================
+        1. Withdrawal 
+        2. Deposit
+        3. Transfer 
+        4. Balance 
+        5. History 
+    """)
+    option = input("Choose an option: ")
+    if option == '1':
+        withdrawal(balance)
+    elif option == '2':
+        deposit(balance)
+    elif option == '3':
+        transfer(balance)
+    elif option == '4':
+        showBalance(balance)
+    elif option == '5':
+        history()
+    else:
+        print(Fore.LIGHTWHITE_EX + Back.RED + "Invalid input")
+        request()
+
+def fileWrite(action , balance , money):
+    fhand = open("balance.txt", "a")
+    line1 = f"\n\n===== ANY BANK ====={action} money: {str(money)}\nBalance:{str(balance)}"
+    x = datetime.datetime.now()
+    y=f"\nDate:{x.year}/{x.month}/{x.day} Time: {x.hour}:{x.minute}"
+    fhand.write(line1)
+    fhand.write(y)
+    fhand.close()
+
+def request():
+    print("Go back to main menu?")
+    yorn = Button(root, text="1.Yes", fg="BLACK",)
+    #1.Yes    2.No
+
+    req = input()
+    if req =='1':
+        menu()
+    elif req == '2':
+        exit()
+
+def withdrawal(balance):
+    print("""
+    ====== Withdrawal ======
+    Enter amount:
+    1. 50 USD
+    2. 100 USD
+    3. 200 USD
+    4. 500 USD
+    5. 1000 USD
+    6. Others
+    ========================
+    """)
+    option = input("Choose an option: ")
+    if option == '1':
+        money = 50
+    elif option == '2':
+        money = 100
+    elif option == '3':
+        money = 200
+    elif option =='4':
+        money = 500
+    elif option == '5':
+        money = 1000
+    elif option == '6':
+        money =int(input("Please, enter amount: "))
+    else:
+        print(Fore.LIGHTWHITE_EX + Back.RED + "Invalid input!!!")
+        withdrawal(balance)
+    if balance >= money:
+        print("Please, wait...")
+        time.sleep(5)
+        print("Please, take your money")
+        #hist_with(money)
+        balance -= money
+        fileWrite("Withdrawal", balance , money)
+    else:
+        print(Fore.LIGHTWHITE_EX + Back.RED + "Sorry, you have not enough money")
+        print(Fore.LIGHTWHITE_EX + Back.RED + "Please, try again               ")
+    request()
+
+def deposit(balance):
+    print("""
+    ====== Deposit ======
+    """)
+    money = int(input("Insert your money: "))
+    print(f"Amount of money is: {money}\n1.  Confirm      2. Cancel")
+    opt = input()
+    if opt == '1':
+        balance += money
+        fileWrite("\nDeposit", balance, money)
+        #history
+        print(balance)
+        print("Would you like a receipt? ")
+        print("1.  Yes      2. No")
+        rec = input()
+        if rec == '1':
+            print("======== ANY BANK ========")
+            x = datetime.datetime.now()
+            print(f"Date:{x.year}/{x.month}/{x.day} Time: {x.hour}:{x.minute}")
+            #bank info(location ID)
+            print(f"Deposited money: {money} USD \nThank you for using ANY BANK")
+    request()
+
+def transfer(balance):
+    acc = input("Enter an account number(12 number-length): ")
+    if len(acc) == 12:
+        money = int(input("Enter an amount money: "))
+        print(f"""
+        ================================
+        An account number: {acc}
+        Amount of money: {money}
+        ================================ 
+        Do you want to continue transaction?(Y/N): 
+        """)
+        conf = str(input())
+        if conf.lower() == 'y':
+            balance -= money
+            fileWrite("\nTransfer", balance, money)
+            # history(money)
+            time.sleep(2)
+            print("Success! Money has been transferred \nDo you need a receipt?")
+            res = input("1.  Yes     2. No")
+            if res == '1':
+                print("======== ANY BANK =========")
+                print(datetime.datetime.now())
+                # bank info(location ID)
+                print(f"Transfer money: {money} USD")
+                print(f"To account: {acc}")
+                print("Thank you for using ANYBANK ")
+            request()
+    else:
+        print(Fore.LIGHTWHITE_EX + Back.RED + "Invalid account number, Please check again!:")
+        transfer(balance)
+
+
+def showBalance(balance):
+    fhand = open('balance.txt', 'r')
+    for line in fhand:
+        line = line.rstrip()
+        if line.startswith("Balance:"):
+            x = line.split()
+
+            print(y[-1])
+    request()
+
+
+def history():
+    fhand = open("balance.txt", "r")
+    print(fhand.read())
+    request()
+
+
+def password():
+    pincode = input("Please enter your pin code (pin code is 1111): ")
+    if pincode == '1111':
+        menu()
+    else:
+        print(Fore.LIGHTWHITE_EX + Back.RED + "Your pin is not matched")
+        print(Fore.LIGHTWHITE_EX + Back.RED + "Please, try again      ")
+        password()
+
+
+if __name__ == '__main__':
+    password()
